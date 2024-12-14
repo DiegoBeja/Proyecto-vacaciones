@@ -11,7 +11,7 @@ public class InterfazSeleccion extends JFrame {
 
     public InterfazSeleccion(){
         setTitle("*Nombre de este pedo*");
-        setSize(1300, 800);
+        setSize(900, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout(0,0));
@@ -24,21 +24,20 @@ public class InterfazSeleccion extends JFrame {
         titulo = new JLabel("Seleccione una opcion");
         titulo.setFont(new Font("Arial" , Font.BOLD,25));
         titulo.setHorizontalAlignment(SwingConstants.CENTER);
-
         panelTitulo = new JPanel();
         panelTitulo.setLayout(new FlowLayout(FlowLayout.CENTER));
         panelTitulo.add(titulo);
 
-
-        //Botones
+        //Settings para acomodar los botones
         GridBagConstraints botones = new GridBagConstraints();
         botones.gridx = 0;
         botones.gridy = 0;
         botones.gridwidth = GridBagConstraints.REMAINDER;
         botones.fill = GridBagConstraints.HORIZONTAL;
         botones.weightx = 0;
-        botones.insets = new Insets(20,10,5,10);
+        botones.insets = new Insets(10,10,10,10);
 
+        //Aquí les pongo la imagen del boton y muevo los botones hacia abajo para acomodarlos
         panelPrincipal.add(botonPiano = new JButton("Piano"), botones);
         botonPiano.setIcon(new ImageIcon(new ImageIcon("src/Imagenes/botonChilo.png").getImage().getScaledInstance(125, 75, Image.SCALE_SMOOTH)));
         botonPiano.setPressedIcon(new ImageIcon(new ImageIcon("src/Imagenes/botonChilo2.png").getImage().getScaledInstance(125, 75, Image.SCALE_SMOOTH)));
