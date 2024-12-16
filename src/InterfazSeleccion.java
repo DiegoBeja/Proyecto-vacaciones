@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class InterfazSeleccion extends JFrame {
     private JPanel panelPrincipal;
@@ -61,6 +63,15 @@ public class InterfazSeleccion extends JFrame {
         botonSalir.setFocusPainted(false);
         botonSalir.setContentAreaFilled(false);
         botonSalir.setBorderPainted(false);
+
+        //Acciones botones
+        botonPiano.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                InterfazPiano piano = new InterfazPiano();
+                dispose();
+            }
+        });
 
         //Agregar todo_al frame
         add(panelTitulo, BorderLayout.NORTH);
