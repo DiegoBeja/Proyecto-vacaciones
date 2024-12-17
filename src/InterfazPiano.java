@@ -2,9 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -83,7 +81,11 @@ public class InterfazPiano extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 String nombreArchivo = JOptionPane.showInputDialog("¿Qué nombre le quiere dar al archivo?");
                 FileWriter cancion = null;
+                FileWriter TodasLasCanciones = null;
                 try {
+                    TodasLasCanciones = new FileWriter("C:\\Users\\bombo\\IdeaProjects\\Proyecto vacaciones\\src\\Canciones\\TodasLasCanciones.txt");
+                    TodasLasCanciones.write(nombreArchivo);
+                    TodasLasCanciones.close();
                     cancion = new FileWriter("C:\\Users\\bombo\\IdeaProjects\\Proyecto vacaciones\\src\\Canciones\\" + nombreArchivo + ".txt");
                     cancion.write(notasTocadas.getText());
                     cancion.close();
@@ -100,6 +102,15 @@ public class InterfazPiano extends JFrame {
 
         // Aquí se muestran todos los archivos de las canciones guardadas
         historialCanciones = new JPanel();
+        try{ int c = 0;
+            String linea;
+            BufferedReader leer = new BufferedReader(new FileReader("C:\\Users\\bombo\\IdeaProjects\\Proyecto vacaciones\\src\\Canciones\\TodasLasCanciones.txt"));
+            while((linea = leer.readLine()) != null){
+                String [] melodias = linea.split("\n");
+            }
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         canciones = new JList<>(cancionesModel);
         historialCanciones.add(canciones);
         historialCanciones.setBackground(new Color(100, 100, 100));
