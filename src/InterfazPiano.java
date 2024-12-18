@@ -16,6 +16,7 @@ public class InterfazPiano extends JFrame {
     private JPanel botonesGuardado;
     private JButton botonGuardar;
     private JButton botonTocar;
+    private JButton botonBorrar;
     private JPanel visualizadorDeNotas;
     private JLabel tituloNotas;
     private JTextArea notasTocadas;
@@ -83,12 +84,16 @@ public class InterfazPiano extends JFrame {
                 FileWriter cancion = null;
                 FileWriter TodasLasCanciones = null;
                 try {
-                    TodasLasCanciones = new FileWriter("C:\\Users\\bombo\\IdeaProjects\\Proyecto vacaciones\\src\\Canciones\\TodasLasCanciones.txt");
+                    TodasLasCanciones = new FileWriter("C:\\Users\\Usuario\\IdeaProjects\\Proyecto-vacaciones\\src\\Canciones\\TodasLasCanciones.txt");
                     TodasLasCanciones.write(nombreArchivo);
                     TodasLasCanciones.close();
-                    cancion = new FileWriter("C:\\Users\\bombo\\IdeaProjects\\Proyecto vacaciones\\src\\Canciones\\" + nombreArchivo + ".txt");
+                    cancion = new FileWriter("C:\\Users\\Usuario\\IdeaProjects\\Proyecto-vacaciones\\src\\Canciones\\" + nombreArchivo + ".txt");
                     cancion.write(notasTocadas.getText());
                     cancion.close();
+
+                    //Al momento de guardar las notas, se reinicia el text area para que haya espacio para una nueva canción
+                    notasTocadas.setText("");
+
                     cancionesModel.addElement(nombreArchivo);
                 } catch (IOException ex) {
                     throw new RuntimeException(ex);
@@ -96,15 +101,32 @@ public class InterfazPiano extends JFrame {
             }
         });
 
+        //Botón para borrar notas puestas en el TextArea
+        botonBorrar = new JButton("Borrar");
+        botonBorrar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!notasTocadas.getText().isEmpty()) {
+                    String textoSacadoParaBorrar = notasTocadas.getText();
+                    if (textoSacadoParaBorrar.length() == 2) {
+                        notasTocadas.setText("");
+                    } else {
+                        notasTocadas.setText(textoSacadoParaBorrar.substring(0, textoSacadoParaBorrar.length() - 3));
+                    }
+                }
+            }
+        });
+
         botonTocar = new JButton("Tocar");
         botonesGuardado.add(botonGuardar);
         botonesGuardado.add(botonTocar);
+        botonesGuardado.add(botonBorrar);
 
         // Aquí se muestran todos los archivos de las canciones guardadas
         historialCanciones = new JPanel();
-        try{ int c = 0;
+        try{
             String linea;
-            BufferedReader leer = new BufferedReader(new FileReader("C:\\Users\\bombo\\IdeaProjects\\Proyecto vacaciones\\src\\Canciones\\TodasLasCanciones.txt"));
+            BufferedReader leer = new BufferedReader(new FileReader("C:\\Users\\Usuario\\IdeaProjects\\Proyecto-vacaciones\\src\\Canciones\\TodasLasCanciones.txt"));
             while((linea = leer.readLine()) != null){
                 String [] melodias = linea.split("\n");
             }
