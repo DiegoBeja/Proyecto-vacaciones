@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
+import javax.sound.sampled.*;
 import java.util.Map;
 
 public class InterfazPiano extends JFrame {
@@ -20,8 +20,17 @@ public class InterfazPiano extends JFrame {
     private JPanel visualizadorDeNotas;
     private JLabel tituloNotas;
     private JTextArea notasTocadas;
+    private JTextField botonMs;
+    private int ms;
     private DefaultListModel<String> cancionesModel;
     private String[] notasNombre = {"C", "CS", "D", "DS", "E", "F", "FS", "G", "GS", "A", "AS", "B"};
+    double[] frecuencias = {
+            65.41, 69.30, 73.42, 77.78, 82.41, 87.31, 92.50, 98.00, 103.83, 110.00, 116.54, 123.47,
+            130.81, 138.59, 146.83, 155.56, 164.81, 174.61, 185.00, 196.00, 207.65, 220.00, 233.08, 246.94,
+            261.63, 277.18, 293.66, 311.13, 329.63, 349.23, 369.99, 392.00, 415.30, 440.00, 466.16, 493.88,
+            523.25, 554.37, 587.33, 622.25, 659.25, 698.46, 739.99, 783.99, 830.61, 880.00, 932.33, 987.77,
+            1046.50
+    };
 
     public InterfazPiano(){
         setTitle("Piano");
@@ -53,6 +62,7 @@ public class InterfazPiano extends JFrame {
                 String nombreBotonNota = notasNombre[j] + i;
                 if(contadorNotas <= 49) {
                     JButton notasBotones = new JButton(nombreBotonNota);
+                    double frecuencia = frecuencias[i];
                     notasBotones.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
@@ -62,6 +72,10 @@ public class InterfazPiano extends JFrame {
                             } else{
                                 notasTocadas.append("-" + nombreBotonNota);
                             }
+                            reproducirNota(frecuencia, ms);
+
+                            //Al momento de que se presiona una nota, es valido el botón borrar ya que hay texto en el TextArea
+                            botonBorrar.setEnabled(true);
                         }
                     });
 
@@ -103,24 +117,60 @@ public class InterfazPiano extends JFrame {
 
         //Botón para borrar notas puestas en el TextArea
         botonBorrar = new JButton("Borrar");
+        botonBorrar.setEnabled(false);
         botonBorrar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                //Se verifica si no está vacio para poder comenzar a "vaciar" la ultima nota
                 if (!notasTocadas.getText().isEmpty()) {
-                    String textoSacadoParaBorrar = notasTocadas.getText();
-                    if (textoSacadoParaBorrar.length() == 2) {
-                        notasTocadas.setText("");
-                    } else {
-                        notasTocadas.setText(textoSacadoParaBorrar.substring(0, textoSacadoParaBorrar.length() - 3));
+
+                    //Se separa las notas quitando el "-"
+                    String[] textoSacadoParaBorrar = notasTocadas.getText().split("-");
+
+                    //Sí hay tengo en el TextArea, se crea un StringBuilder para crear el nuevo String sin la ultima nota
+                    if (textoSacadoParaBorrar.length != 0) {
+                        StringBuilder textoNuevoSacadoParaBorrar = new StringBuilder();
+
+                        //Por cada elemento de la cadena separada por "-" se alamcenará en el StringBuilder pero no el ultimo
+                        for (int i = 0; i < textoSacadoParaBorrar.length - 1; ++i) {
+
+                            //Si es el penultimo elemento, no se agrega el guión
+                            if (i == textoSacadoParaBorrar.length - 2) {
+                                textoNuevoSacadoParaBorrar.append(textoSacadoParaBorrar[i]);
+
+                                //Si no es el penultimo elemento, entonces si se agrega el guión
+                            } else {
+                                textoNuevoSacadoParaBorrar.append(textoSacadoParaBorrar[i]).append("-");
+                            }
+
+                        }
+
+                        //Ya por ultimo se agrega el StringBuilder otra vez al TextArea pero sin el ultimo elemento ya que se pretende eliminar
+                        //una vez seleccionado el botón borrar
+                        notasTocadas.setText(textoNuevoSacadoParaBorrar.toString());
                     }
                 }
             }
         });
 
         botonTocar = new JButton("Tocar");
+
+        ms = 500;
+        botonMs = new JTextField();
+        botonMs.setPreferredSize(new Dimension(100,27));
+        botonMs.setText(String.valueOf(ms));
+        botonMs.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                ms = Integer.parseInt(botonMs.getText());
+            }
+        });
+
         botonesGuardado.add(botonGuardar);
         botonesGuardado.add(botonTocar);
         botonesGuardado.add(botonBorrar);
+        botonesGuardado.add(botonMs);
 
         // Aquí se muestran todos los archivos de las canciones guardadas
         historialCanciones = new JPanel();
@@ -162,5 +212,28 @@ public class InterfazPiano extends JFrame {
         add(historialCanciones, gbc);
 
         setVisible(true);
+    }
+
+    private void reproducirNota(double frecuencia, int duracion)
+    {
+        float frecuenciaMuestreo = 44100;
+        byte[] buffer = new byte[(int) frecuenciaMuestreo * duracion / 1000];
+
+        for (int i = 0; i < buffer.length; i++) {
+            double angulo = 2.0 * Math.PI * i / (frecuenciaMuestreo / frecuencia);
+            buffer[i] = (byte) (Math.sin(angulo) * 50); // Onda sinusoidal
+        }
+
+        AudioFormat formato = new AudioFormat(frecuenciaMuestreo, 8, 1, true, false);
+        try {
+            SourceDataLine linea = AudioSystem.getSourceDataLine(formato);
+            linea.open(formato);
+            linea.start();
+            linea.write(buffer,0,buffer.length);
+            linea.drain();
+            linea.close();
+        } catch (LineUnavailableException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
