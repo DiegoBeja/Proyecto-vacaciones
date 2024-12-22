@@ -95,18 +95,22 @@ public class InterfazPiano extends JFrame {
         botonGuardar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                String nombreArchivo = JOptionPane.showInputDialog("¿Qué nombre le quiere dar al archivo?");
-                try (
-                        FileWriter TodasLasCanciones = new FileWriter("C:\\Users\\bombo\\IdeaProjects\\Proyecto vacaciones\\src\\Canciones\\TodasLasCanciones.txt", true);
-                        FileWriter cancion = new FileWriter("C:\\Users\\bombo\\IdeaProjects\\Proyecto vacaciones\\src\\Canciones\\" + nombreArchivo + ".txt")
-                ) {
-                    TodasLasCanciones.write(nombreArchivo + "\n");
-                    cancion.write(notasTocadas.getText());
-                    notasTocadas.setText("");
+                if(notasTocadas.getText().isEmpty()){
+                    JOptionPane.showMessageDialog(null,"No hay ninguna nota tocada", "Error" ,JOptionPane.ERROR_MESSAGE);
+                } else {
+                    String nombreArchivo = JOptionPane.showInputDialog("¿Qué nombre le quiere dar al archivo?");
+                    try (
+                            FileWriter TodasLasCanciones = new FileWriter("C:\\Users\\bombo\\IdeaProjects\\Proyecto vacaciones\\src\\Canciones\\TodasLasCanciones.txt", true);
+                            FileWriter cancion = new FileWriter("C:\\Users\\bombo\\IdeaProjects\\Proyecto vacaciones\\src\\Canciones\\" + nombreArchivo + ".txt")
+                    ) {
+                        TodasLasCanciones.write(nombreArchivo + "\n");
+                        cancion.write(notasTocadas.getText());
+                        notasTocadas.setText("");
 
-                    cancionesModel.addElement(nombreArchivo);
-                } catch (IOException ex) {
-                    throw new RuntimeException(ex);
+                        cancionesModel.addElement(nombreArchivo);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    }
                 }
             }
         });
@@ -151,6 +155,12 @@ public class InterfazPiano extends JFrame {
         });
 
         botonTocar = new JButton("Tocar");
+        botonTocar.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+            }
+        });
 
         ms = 500;
         botonMs = new JTextField();
@@ -179,6 +189,8 @@ public class InterfazPiano extends JFrame {
             throw new RuntimeException(e);
         }
         canciones = new JList<>(cancionesModel);
+        canciones.setBackground(new Color(100, 100, 100));
+        canciones.setForeground(new Color(255, 255, 255));
         historialCanciones.add(canciones);
         historialCanciones.setBackground(new Color(100, 100, 100));
 
