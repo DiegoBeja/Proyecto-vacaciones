@@ -6,6 +6,7 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.sound.sampled.*;
+import java.util.List;
 import java.util.Map;
 
 public class InterfazPiano extends JFrame {
@@ -32,7 +33,7 @@ public class InterfazPiano extends JFrame {
             1046.50
     };
 
-    public InterfazPiano(){
+    public InterfazPiano() {
         setTitle("Piano");
         setSize(900, 600);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -57,19 +58,19 @@ public class InterfazPiano extends JFrame {
         botonesNotas = new HashMap<>();
         int contadorNotas = 1;
         // Crear todos los botones de un piano de 49 teclas con sus respectivas notas
-        for(int i=2; i<7; i++){
-            for(int j=0; j<12; j++){
+        for (int i = 2; i < 7; i++) {
+            for (int j = 0; j < 12; j++) {
                 String nombreBotonNota = notasNombre[j] + i;
-                if(contadorNotas <= 49) {
+                if (contadorNotas <= 49) {
                     JButton notasBotones = new JButton(nombreBotonNota);
                     double frecuencia = frecuencias[i];
                     notasBotones.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             // Si es la primera nota que se toca no se agrega "-"
-                            if(notasTocadas.getText().equals("")){
+                            if (notasTocadas.getText().equals("")) {
                                 notasTocadas.append(nombreBotonNota);
-                            } else{
+                            } else {
                                 notasTocadas.append("-" + nombreBotonNota);
                             }
                             reproducirNota(frecuencia, ms);
@@ -95,17 +96,12 @@ public class InterfazPiano extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String nombreArchivo = JOptionPane.showInputDialog("¿Qué nombre le quiere dar al archivo?");
-                FileWriter cancion = null;
-                FileWriter TodasLasCanciones = null;
-                try {
-                    TodasLasCanciones = new FileWriter("C:\\Users\\Usuario\\IdeaProjects\\Proyecto-vacaciones\\src\\Canciones\\TodasLasCanciones.txt");
-                    TodasLasCanciones.write(nombreArchivo);
-                    TodasLasCanciones.close();
-                    cancion = new FileWriter("C:\\Users\\Usuario\\IdeaProjects\\Proyecto-vacaciones\\src\\Canciones\\" + nombreArchivo + ".txt");
+                try (
+                        FileWriter TodasLasCanciones = new FileWriter("C:\\Users\\bombo\\IdeaProjects\\Proyecto vacaciones\\src\\Canciones\\TodasLasCanciones.txt", true);
+                        FileWriter cancion = new FileWriter("C:\\Users\\bombo\\IdeaProjects\\Proyecto vacaciones\\src\\Canciones\\" + nombreArchivo + ".txt")
+                ) {
+                    TodasLasCanciones.write(nombreArchivo + "\n");
                     cancion.write(notasTocadas.getText());
-                    cancion.close();
-
-                    //Al momento de guardar las notas, se reinicia el text area para que haya espacio para una nueva canción
                     notasTocadas.setText("");
 
                     cancionesModel.addElement(nombreArchivo);
@@ -158,7 +154,7 @@ public class InterfazPiano extends JFrame {
 
         ms = 500;
         botonMs = new JTextField();
-        botonMs.setPreferredSize(new Dimension(100,27));
+        botonMs.setPreferredSize(new Dimension(100, 27));
         botonMs.setText(String.valueOf(ms));
         botonMs.addActionListener(new ActionListener() {
             @Override
@@ -174,11 +170,10 @@ public class InterfazPiano extends JFrame {
 
         // Aquí se muestran todos los archivos de las canciones guardadas
         historialCanciones = new JPanel();
-        try{
+        try(BufferedReader leer = new BufferedReader(new FileReader("C:\\Users\\bombo\\IdeaProjects\\Proyecto vacaciones\\src\\Canciones\\TodasLasCanciones.txt"));) {
             String linea;
-            BufferedReader leer = new BufferedReader(new FileReader("C:\\Users\\Usuario\\IdeaProjects\\Proyecto-vacaciones\\src\\Canciones\\TodasLasCanciones.txt"));
-            while((linea = leer.readLine()) != null){
-                String [] melodias = linea.split("\n");
+            while ((linea = leer.readLine()) != null) {
+                cancionesModel.addElement(linea);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
