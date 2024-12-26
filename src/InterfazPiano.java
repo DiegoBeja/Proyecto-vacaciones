@@ -160,7 +160,20 @@ public class InterfazPiano extends JFrame {
         botonTocar.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                String[] notas = notasTocadas.getText().split("-");
+                int posicion = 0;
+                for (Map.Entry<JButton, String> entrada : botonesNotas.entrySet()) {
+                    String nota = entrada.getValue();
 
+                    for (String notaTocada : notas) {
+                        if (notaTocada.equals(nota)) {
+                            double frecuancia = frecuencias[posicion];
+                            System.out.println("Nota coincidente: " + nota + " en posición: " + posicion);
+                            reproducirNota(frecuancia, ms);
+                        }
+                    }
+                    posicion++;
+                }
             }
         });
 
@@ -191,6 +204,8 @@ public class InterfazPiano extends JFrame {
             throw new RuntimeException(e);
         }
         canciones = new JList<>(cancionesModel);
+
+        // Cuando se selecciona un archivo del historial se muestran las notas que contiene
         canciones.addListSelectionListener(new ListSelectionListener() {
             @Override
             public void valueChanged(ListSelectionEvent e) {
@@ -198,6 +213,7 @@ public class InterfazPiano extends JFrame {
                 if(estadoSeleccionArchivo == 0){
                     try(BufferedReader leer = new BufferedReader(new FileReader("C:\\Users\\bombo\\IdeaProjects\\Proyecto vacaciones\\src\\Canciones\\" + canciones.getSelectedValue() + ".txt"))) {
                         String linea;
+                        // Se hace reset a las notas mostradas
                         notasTocadas.setText("");
                         while((linea = leer.readLine()) != null){
                             notasTocadas.append(linea);

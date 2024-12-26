@@ -8,7 +8,7 @@ public class InterfazSeleccion extends JFrame {
     private JPanel panelTitulo;
     private JLabel titulo;
     private JButton botonPiano;
-    private JButton botonRegistro;
+    private JButton botonBiblioteca;
     private JButton botonSalir;
 
     public InterfazSeleccion(){
@@ -48,13 +48,13 @@ public class InterfazSeleccion extends JFrame {
         botonPiano.setContentAreaFilled(false);
         botonPiano.setBorderPainted(false);
         botones.gridy++;
-        panelPrincipal.add(botonRegistro = new JButton("Registro"), botones);
-        botonRegistro.setIcon(new ImageIcon(new ImageIcon("src/Imagenes/botonChilo.png").getImage().getScaledInstance(125, 75, Image.SCALE_SMOOTH)));
-        botonRegistro.setPressedIcon(new ImageIcon(new ImageIcon("src/Imagenes/botonChilo2.png").getImage().getScaledInstance(125, 75, Image.SCALE_SMOOTH)));
-        botonRegistro.setHorizontalTextPosition(SwingConstants.CENTER);
-        botonRegistro.setFocusPainted(false);
-        botonRegistro.setContentAreaFilled(false);
-        botonRegistro.setBorderPainted(false);
+        panelPrincipal.add(botonBiblioteca = new JButton("Biblioteca"), botones);
+        botonBiblioteca.setIcon(new ImageIcon(new ImageIcon("src/Imagenes/botonChilo.png").getImage().getScaledInstance(125, 75, Image.SCALE_SMOOTH)));
+        botonBiblioteca.setPressedIcon(new ImageIcon(new ImageIcon("src/Imagenes/botonChilo2.png").getImage().getScaledInstance(125, 75, Image.SCALE_SMOOTH)));
+        botonBiblioteca.setHorizontalTextPosition(SwingConstants.CENTER);
+        botonBiblioteca.setFocusPainted(false);
+        botonBiblioteca.setContentAreaFilled(false);
+        botonBiblioteca.setBorderPainted(false);
         botones.gridy++;
         panelPrincipal.add(botonSalir = new JButton("Salir"), botones);
         botonSalir.setIcon(new ImageIcon(new ImageIcon("src/Imagenes/botonChilo.png").getImage().getScaledInstance(125, 75, Image.SCALE_SMOOTH)));
@@ -68,7 +68,22 @@ public class InterfazSeleccion extends JFrame {
         botonPiano.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                InterfazPiano piano = new InterfazPiano();
+                new InterfazPiano();
+                dispose();
+            }
+        });
+
+        botonBiblioteca.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                new InterfazBiblioteca();
+                dispose();;
+            }
+        });
+
+        botonSalir.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
                 dispose();
             }
         });
