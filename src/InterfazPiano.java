@@ -6,6 +6,8 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.sound.sampled.*;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import java.util.List;
 import java.util.Map;
 
@@ -189,6 +191,26 @@ public class InterfazPiano extends JFrame {
             throw new RuntimeException(e);
         }
         canciones = new JList<>(cancionesModel);
+        canciones.addListSelectionListener(new ListSelectionListener() {
+            @Override
+            public void valueChanged(ListSelectionEvent e) {
+                int estadoSeleccionArchivo = JOptionPane.showConfirmDialog(null, "¿Desea cargar esta melodía?", "Selección" ,JOptionPane.YES_NO_OPTION);
+                if(estadoSeleccionArchivo == 0){
+                    try(BufferedReader leer = new BufferedReader(new FileReader("C:\\Users\\bombo\\IdeaProjects\\Proyecto vacaciones\\src\\Canciones\\" + canciones.getSelectedValue() + ".txt"))) {
+                        String linea;
+                        notasTocadas.setText("");
+                        while((linea = leer.readLine()) != null){
+                            notasTocadas.append(linea);
+                        }
+                    } catch (FileNotFoundException ex) {
+                        throw new RuntimeException(ex);
+                    } catch (IOException ex) {
+                        throw new RuntimeException(ex);
+                    } ;
+                }
+
+            }
+        });
         canciones.setBackground(new Color(100, 100, 100));
         canciones.setForeground(new Color(255, 255, 255));
         historialCanciones.add(canciones);
